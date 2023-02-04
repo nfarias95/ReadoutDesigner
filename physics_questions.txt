@@ -1,0 +1,7 @@
+- it looks like R doesn't change the resonant frequency. does that make sense?
+yes. R only "dampens" the resonance, with R>0, the current can't go to infinity
+
+- each TES will have a different phase due to their LC combination
+- does dfmux already account for that?
+
+- what is a typicall V_bias?

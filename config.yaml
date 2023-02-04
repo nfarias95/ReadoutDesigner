@@ -1,0 +1,15 @@
+# Nte yaml scientific notation: X.Ye+0Z or X.Ye-0Z  , e.x: 1100 --> 1.1e+03
+
+# detector parameters
+R_frac: 1  # [unitless] nominal fraction of bolometer resistance
+R_tes_normal: 1 # [ohms] nominal normal (not superconducting) resistance of bolometer
+
+# readout parameters
+mux_factor : 68 # number of channels
+L_res : 6.0e-05 # [Henry] inductance of resonator - Faramarzi 2018: 60muH -- 
+freq_bias_range : [1.5e+06, 5.5e+06]  # [Hz] range of bias frequency -- np.array([lowest frequency, highest frequency])
+
+#parasitics -- following Josh's thesis notation
+L_stray : 6.0
+e-08 # [Henry] # stray inductance in series with ALL TESs (Z_com)
+r_s : 0.0 # stray resistance in series with each TES

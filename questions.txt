@@ -1,0 +1,3 @@
+Questions I have:
+
+Do we want the impedances to be vectors so that they can be a function of frequency?
