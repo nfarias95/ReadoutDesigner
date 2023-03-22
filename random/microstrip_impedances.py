@@ -29,7 +29,7 @@ def main():
     
     # Checking that the inductance of the bias trace is correct:
     w = 0.127/1000 # [meters] width of trace
-    d = 10e-3 # [meters] -- 10 mm
+    d = 10e-3 # length of trace [meters] -- 10 mm
 
     L_bias, C_bias = calculate_pad_L_and_C(d, w, h, t, epsilon_r)
     print("L_bias: ", L_bias * 1e9 , " nH ")
@@ -44,11 +44,13 @@ def main():
     print("C0: ", C0*1e12, " pF")
     
     # Now let's see what happens as we expand the pads
-    d_array = np.linspace(0.5, 2.0, 4) * 1e-3 # [meters]
-    w_array = np.linspace(1, 5, 10) * 1e-3 #[meters]
+    d_array = np.linspace(0.5, 3.0, 6) * 1e-3 # [meters]
+    w_array = np.linspace(0.5, 2, 10) * 1e-3 #[meters]
     
-    L_matrix = np.zeros((4, 10)) 
-    C_matrix = np.zeros((4,10)) 
+    n_d = len(d_array)
+    
+    L_matrix = np.zeros((n_d, 10)) 
+    C_matrix = np.zeros((n_d, 10)) 
     
     d_c = -1 # d counter
     
