@@ -11,19 +11,22 @@ e = np.e
 def main():
     print("\n\n\nLet's calculate some impedances!\n\n")
     
-    # Note: board thickness is 1.6 mm but we have 8 layers
-    # material: Tg150 FR-4
-    # Typical dielectric constant values found in dielectric materials commonly used in PCBs 
+    # Helpful notes: 
+    # - Typical dielectric constant values found in dielectric materials commonly used in PCBs 
     # are between 3.5 and 5.5, but this value is strictly dependent on the signal frequency and 
     # decreases as it increases. For FR4, varies from 3.8 to 4.8. Let's take 4.3
     
-    # 1 oz -> 1.2 mils
-    # bias trace length is 10 mm
+    # - SQUID printed circuit board thickness is 1.6 mm but we have 8 layers
+    # material: Tg150 FR-4
+    # we have 8 layers and the board thickness is 1.6 mm, so the ground plane is a distance of 1.6/7 mm
+
+    # 1 oz -> 1.2 mils --- 1.2/1000 * 2.54/100 # [meters]
+    # bias trace length i s 10 mm
     # bias pad in SA13/StarCRYO footprint is 1x1 mm
     
-    # PCB PARAMETERS
-    h = 1.6 / 7 /1000 # [meters] height of dielectric (distance between trace/microstrip and ground). 
-                # we have 8 layers and the board thickness is 1.6 mm, so the ground plane is a distance of 1.6/7 mm
+    # MICROSTRIP PARAMETERS
+    h = 1.6 / 7 /1000 # [meters] height of dielectric (for a PCB, distance between trace/microstrip and ground planes). 
+                
     t = 1.2/1000 * 2.54/100 # [meters] thickness of copper layer
     epsilon_r = 4.3 #  [unitless] relative permittivity 
     
@@ -44,13 +47,14 @@ def main():
     print("C0: ", C0*1e12, " pF")
     
     # Now let's see what happens as we expand the pads
-    d_array = np.linspace(0.5, 3.0, 6) * 1e-3 # [meters]
-    w_array = np.linspace(0.5, 2, 10) * 1e-3 #[meters]
+    d_array = np.array([22.3]) * 1e-3 # [meters]
+    w_array = np.array([1, 2]) * 1e-3 #[meters]
     
     n_d = len(d_array)
+    n_w = len(w_array)
     
-    L_matrix = np.zeros((n_d, 10)) 
-    C_matrix = np.zeros((n_d, 10)) 
+    L_matrix = np.zeros((n_d, n_w)) 
+    C_matrix = np.zeros((n_d, n_w)) 
     
     d_c = -1 # d counter
     
