@@ -16,8 +16,6 @@ import numpy as np
 sim_type = "kapton_film" # can be "kapton_film", "carbon_fiber_strut"
 
 def main():
-    
-    
     T0 = 0.112 # first temperature stage, Kelvin
     T1 = 0.405 # second temperature stage, Kelvin    
 
@@ -36,13 +34,12 @@ def main():
         n = 0.181
     
     elif sim_type == "kapton_film":
-        # old: k_kapton_array = 1.8e-3 * T_array**1.15  # W / m / K  -- This is what Tucker used
-
+        # https://www.sciencedirect.com/science/article/pii/S0011227500000138
         # Kapton Island Sim
         # geometrical properties
-        thick =  0.00095 * 0.0254#12.5e-6 # m
+        thick =  12.5e-6 #0.00095 * 0.0254#12.5e-6 # m
         length = 25e-3 # m
-        width = 2 * 10e-3 # m   -- assuming X sides
+        width = 2 * 10e-3 # m   -- assuming 2 sides
         area = thick * width
     
         # thermal properties
@@ -50,6 +47,22 @@ def main():
         beta = 1.0
         gamma = 0
         n = 0
+      
+    elif sim_type == "ubilex_film":
+        # Ubilex Island Sim
+        #https://www.sciencedirect.com/science/article/pii/S0011227500000138
+        # geometrical properties
+        thick =  0.00095 * 0.0254#12.5e-6 # m
+        length = 25e-3 # m
+        width = 2 * 10e-3 # m   -- assuming X sides
+        area = thick * width
+    
+        # thermal properties
+        alpha = 1.8e-3 # W/m K
+        beta = 1.0
+        gamma = 0
+        n = 0  
+    
       
     # get the heat dissipated across conductor
     Q = get_dissipated_heat(T0, T1, alpha, beta, gamma, n,  area, length)
@@ -88,36 +101,6 @@ def get_dissipated_heat(T0, T1, alpha, beta, gamma, n,  area, length):
     Q = k_integrated * area / length 
     
     return Q
-
-def get_kapton_thermal_conductivity(T:float):
-    """
-    FUNCTION IS BROKEN, FIX BEFORE USING
-    Function to calculate the thermal conductivity of Kapton for a specific temperature
-        
-    based on: https://trc.nist.gov/cryogenics/materials/Polyimide%20Kapton/PolyimideKapton_rev.htm
-    data range: 4-300 K
-
-    Args:
-        T (float): temperature
-    """
-    
-    # units: W/(m*K)
-    a = 5.73101	
-    b= -39.5199	
-    c = 9.9313	
-    d = -83.8572
-    e = 50.9157	
-    f = -17.9835
-    g = 3.42413
-    h = -0.27133
-    i = 0
-    
-    kappa = 10**(a + b*(np.log10(T)) + c*np.log10(T)**2 + d*np.log10(T)**3 + e*np.log10(T)**4 + f*np.log10(T)**5 +\
-        g**np.log10(T)**6 + h*np.log10(T)**7 + i*np.log10(T)**8)
-    
-    
-    return kappa
-
 
 if __name__ == "__main__":
     main()
