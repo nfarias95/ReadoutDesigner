@@ -19,6 +19,11 @@ def main():
     T0 = 0.112 # first temperature stage, Kelvin
     T1 = 0.405 # second temperature stage, Kelvin    
 
+    if sim_type == "heat_strap":  
+        length = 0.5 # m
+        T1 = 0.450 # K
+        T0 = 0.405 # K 
+
     if sim_type == "carbon_fiber_strut":
         # Carbon Struts following Keith's Note 067 version 1.0
         n_rods = 4 # number of rods in assembly
