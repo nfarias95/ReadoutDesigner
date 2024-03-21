@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def calculate_responsivity(V_bias, loop_gain, tau=None, omega=None, ac=True):
+def calculate_responsivity(V_bias, loop_gain, tau=None, omega=None, ac=True, R_TES=1, R_s=0):
     """
     Function to calculate the responsivity of a bolometer
 
@@ -20,9 +20,16 @@ def calculate_responsivity(V_bias, loop_gain, tau=None, omega=None, ac=True):
         tau = omega/100
     
     if ac:
-        S_I = np.sqrt(2)/V_bias * (loop_gain/(loop_gain + 1)) * (1/(1 + omega*tau))
-    
+        prefactor = np.sqrt(2)    
     else:
-        S_I = 1/V_bias * (loop_gain/(loop_gain + 1)) * (1/(1 + omega*tau))
+        prefactor = 1
+    
+    V_TES = V_bias * R_TES / (R_TES + R_s) # V_bias if there are no stray impedances
+    
+    # Derived in Tucker's thesis section 5.1 and re-arranged in Josh's thesis
+    # I NEED TO CHECK HOW THE LAST TERM WHICH DEPENDS ON TAU GETS AFFECTED
+    # I DON'T TRUST TUCKER'S DERIVATION JUST YET
+    S_I = prefactor/V_TES * \
+        (loop_gain * (R_TES) /(loop_gain*(R_TES - R_s) + (R_TES + R_s))) * (1/(1 + omega*tau))
         
     return S_I
