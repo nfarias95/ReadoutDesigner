@@ -1,13 +1,14 @@
 FONT = "Times New Roman"
 FONT_SIZE = 20
 LEGEND_SIZE = 17
-FIG_SIZE = (10, 8) # size of figure
+FIG_SIZE = (9, 7) # size of figure
 markersize=12
 
 from matplotlib import pyplot as plt
 plt.rcParams["font.family"] = FONT
 plt.rcParams.update({'font.size': FONT_SIZE})
 plt.rc('legend', fontsize=LEGEND_SIZE)    # legend fontsize
+plt.rc('mathtext', fontset='stix')  # Use 'stix' fontset for mathtext, closer to Times new Roman
 
 import matplotlib as mpl
 mpl.rcParams['figure.facecolor'] = 'white'# necessary in jupyter notebook in visual studio code

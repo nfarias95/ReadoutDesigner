@@ -14,9 +14,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import csv
-import sys
-sys.path.insert(0, 'C:/Users/nicol/Documents/00Research/PythonCode/ReadoutDesigner/')
-from mechanical_design.thermal_properties.core_thermal_equations import  get_dissipated_heat, NbTi, PhosphorBronze, Kapton
+
+#from thermal_properties import get_dissipated_heat
 
 #data_dir = "C:/Users/nicol/Documents/00Research/Data/Thermal Conductance/"
 data_dir =  "C:/Users/nicol/Documents/00Research/Data/APEX/Run 63 Thermal Conductance/"
@@ -31,12 +30,11 @@ def main():
     
     # Expected parasitics
     Twire = 4 #[K] temperature where we clamp the wire
-    heater_wire_length = 0.4 #[m] # Very rough!
+    length_wire = 0.4 #[m] # Very rough!
     # from Woodcraft 2010, NbTi
-    #alpha_wire = 0.027 ; beta_wire = 2 ; gamma_wire = 0 ; n_wire = 0 ; 
+    alpha_wire = 0.027 ; beta_wire = 2 ; gamma_wire = 0 ; n_wire = 0 ; 
     wire_diameter = np.mean([0.097, 0.088, 0.104])*1e-3 # [m] # measured by Nicole
-    heater_wire_area = (wire_diameter ** 2) /4 * np.pi * 4 #(4 wires)
-    heater_wire_material = NbTi()
+    area_wire = (wire_diameter ** 2) /4 * np.pi * 4 #(4 wires)
     
     # Material properties  - confirmed.
     thick = 0.00095 * 0.0254 # measured with micrometer. (25.4e-6: from email exchange with the company)
@@ -53,7 +51,6 @@ def main():
     I_out = V_out / (Rw+ Rc+ Rp)
     P_heater = I_out**2 * Rc
     
-    print("V_out [V]: ", V_out)
     print("P_heater [nW]: ", P_heater*1e9)
     
     # get uncertainty
@@ -71,18 +68,14 @@ def main():
     # Estimate power from parasitics
     P_par_estimated = np.array([])
     for T in T1:
-        P_par_estimated = np.append(P_par_estimated, get_dissipated_heat(\
-            T, Twire, heater_wire_material, heater_wire_area, heater_wire_length))
+        P_par_estimated = np.append(P_par_estimated, get_dissipated_heat(T, Twire, alpha_wire, beta_wire, gamma_wire, n_wire, area_wire, length_wire))
     
 
-    # FIT TO THE DATA
-    # fitted parameters
+    # fit data 
     params, cov = curve_fit(power_model, T1, P_heater/g)
     a = params[0] ; b = params[1] ; Ppar_fit = params[2] * g
     beta = b - 1
     alpha = a * (beta + 1)
-    measured_material = MeasuredMaterialProperties(alpha, beta, 0, 0)
-    # fitted curve
     P_heater_over_g_fit = power_model(np.sort(T1), params[0], params[1], params[2])
     P_heater_fit = P_heater_over_g_fit * g
 
@@ -112,7 +105,7 @@ def main():
     Tbath = 0.112 # Temperature of bath (detector stage) [K]
     Tsq = 0.405 # Temperature of squid stage {K}
     Pmax = 5e-9 # Watts
-    P_expected_sq_k = get_dissipated_heat(Tbath, Tsq, measured_material, area=area, length=length)
+    P_expected_sq_k = get_dissipated_heat(Tbath, Tsq, alpha, beta, gamma=0, n=0, area=area, length=length)
     P_expected_sq = g * a * (Tsq**b - Tbath**b)
     
     print("expected dissipated power: {:.2f} nW , {:.2f} nW ".format(P_expected_sq_k*1e9, P_expected_sq*1e9))
@@ -131,12 +124,6 @@ def main():
     print("The end. \n\n")
     plt.show()
 
-class MeasuredMaterialProperties():
-    def __init__(self, alpha, beta, gamma, n):
-        self.alpha=alpha
-        self.beta=beta
-        self.gamma=gamma
-        self.n=n
 
 def read_data_from_csv(path_to_file:str):
     """function to read the voltage and temperature from a csv file.

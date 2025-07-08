@@ -41,6 +41,19 @@ class PhosphorBronze:
             self.gamma = 0
             self.n = 0
 
+class CFRP:
+    """
+    Carbon Fiber Reinforced Plastic
+    See Keith's note 67
+    """
+    def __init__(self, cryogenic=True):
+    
+        if cryogenic:
+            # Thermal conductance properties
+            self.alpha = 8.39e-3 # [W/m K]
+            self.beta = 2.12
+            self.gamma = -1.05
+            self.n = 0.181
 
 
 class Kapton:
@@ -49,6 +62,16 @@ class Kapton:
         if cryogenic:
             # Thermal conductance properties
             self.alpha = 6.5e-3 # W/m K
+            self.beta = 1.0
+            self.gamma = 0
+            self.n = 0
+            
+class Kapton2:
+    # Source: https://www.sciencedirect.com/science/article/pii/S0011227500000138
+    def __init__(self, cryogenic=True):
+        if cryogenic:
+            # Thermal conductance properties
+            self.alpha = 5.24e-3 # W/m K
             self.beta = 1.0
             self.gamma = 0
             self.n = 0

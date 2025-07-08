@@ -15,10 +15,10 @@ def main():
     
     # Baseline (reference) system - using SA13s
     R_tes_0 = 1. # TES resistance
-    Tc0 = 0. # TES critical temperature
-    T_bias0 = .0 # 
-    zt0 = 1500. # transimpedance
-    rdyn0 = 400. # dynamical impedance
+    Tc0 = 0.480 # TES critical temperature
+    T_bias0 = 4 # 
+    zt0 = 800. # transimpedance
+    rdyn0 = 750. # dynamical impedance
     lin0 = 70e-9 # input inductance
     noise_squid_only_0 = 1e-12 # squid noise
     
@@ -33,22 +33,21 @@ def main():
                             noise_squid_only = noise_squid_only_0))
     dfmux_0.calc_noise()
     
-    # System to compare to baseline
-    label = "Increasing nuller by factor of 3"
-    R_tes_1 = R_tes_0 # TES resistance
+    # Comparison - using SA13s
+    R_tes_1 = 0.5 # TES resistance
     Tc1 = Tc0 # TES critical temperature
-    T_bias1 = T_bias0 # 
+    T_bias1 = 4 # 
     zt1 = zt0 # transimpedance
     rdyn1 = rdyn0 # dynamical impedance
     lin1 = lin0 # input inductance
-    noise_squid_only_1 = noise_squid_only_0 # squid noise
-    Rstiff_nuller = 3000 * 3# nuller stiffening resistor
+    noise_squid_only_1 = 7e-12 # squid noise
+    label=""
     
     dfmux_1 = DfMux(freqs,
               bolo = Bolometer(r=R_tes_1, tc=Tc1),
               carrier = CarrierChain(t_bias=T_bias1),
               demod = DemodChain(),
-              nuller = NullerChain(Rstiff_nuller),
+              nuller = NullerChain(),
               
               squid = SQUID(zt = zt1, 
                             rdyn = rdyn1,
@@ -59,12 +58,18 @@ def main():
     
     # ------- PLOT STUFF ---------
     # PLOT INDIVIDUALLY
-    plot_readout_noise_contributions(dfmux_0, figcount=1, title="Reference")
+    # plot_readout_noise_contributions(dfmux_0, figcount=1, title="Reference")
     #plot_readout_noise_contributions(dfmux_1, figcount=2, title=label)
     
     # plot comparison between two systems
-    plot_comparison_readout_noise_contributions(dfmux_0, dfmux_1, figcount=3, title=label)
-    #plot_total_noise_comparison(dfmux_0, dfmux_1, figcount=3, title="")
+    # plot_comparison_readout_noise_contributions(dfmux_0, dfmux_1, figcount=3, title=label)
+    # plot_total_noise_comparison(dfmux_0, dfmux_1, figcount=3, title="")
+    
+    plt.plot(freqs/1e6, dfmux_0.total_noise*1e12, label="R_TES=1.0")
+    plt.plot(freqs/1e6, dfmux_1.total_noise*1e12, label="R_TES=0.5")
+    plt.legend()
+    plt.xlabel("Frequency [MHz]")
+    plt.ylabel("NEI [pA/sqrt(Hz)]")
     
     # -------- PRINT STUFF ----------
     print("-----------------------")
